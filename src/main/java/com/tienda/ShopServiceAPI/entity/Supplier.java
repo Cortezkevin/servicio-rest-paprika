@@ -9,7 +9,8 @@ import java.util.Collection;
 public class Supplier {
 
 	@Id
-	private String id_supplier;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Integer id_supplier;
 	
 	@Column(name = "name")
 	private String name;
@@ -29,7 +30,7 @@ public class Supplier {
 	public Supplier() {
 	}
 
-	public Supplier(String id_supplier, String name, String address, Integer phone, String state, Collection<Product> itemsProducts) {
+	public Supplier(Integer id_supplier, String name, String address, Integer phone, String state, Collection<Product> itemsProducts) {
 		this.id_supplier = id_supplier;
 		this.name = name;
 		this.address = address;
@@ -38,11 +39,11 @@ public class Supplier {
 		this.itemsProducts = itemsProducts;
 	}
 
-	public String getId_supplier() {
+	public Integer getId_supplier() {
 		return id_supplier;
 	}
 
-	public void setId_supplier(String id_supplier) {
+	public void setId_supplier(Integer id_supplier) {
 		this.id_supplier = id_supplier;
 	}
 

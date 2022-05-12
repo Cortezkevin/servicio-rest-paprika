@@ -1,6 +1,5 @@
 package com.tienda.ShopServiceAPI.service;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -31,8 +30,18 @@ public class ProductService {
     public List<Product> findAll() {
         return repository.findAll();
     }
+    
+    public List<Product> listByCategory(String categoryName){
+    	Category c = categoryRepository.findByName(categoryName).orElse(null);
+    	return repository.findByCategory(c);
+    }
+    
+    public List<Product> listBySupplier(String supplierName){
+    	Supplier s = supplierRepository.findByName(supplierName).orElse(null);
+    	return repository.findBySupplier(s);
+    }
 
-    public Optional<Product> findById(String id) {
+    public Optional<Product> findById(Integer id) {
         Optional<Product> obj = repository.findById(id);
         if (obj.isEmpty()) {
             return Optional.empty();
@@ -48,10 +57,17 @@ public class ProductService {
         try {
             Category category = categoryRepository.findById(p.getCategory().getId_category()).orElse(null);
             Supplier supplier = supplierRepository.findById(p.getSupplier().getId_supplier()).orElse(null);
-            repository.insert(category.getId_category(), supplier.getId_supplier(), p.getName(), p.getMark(),
-                    p.getDescription(), p.getUrl_image(), p.getExpiration_date(), p.getPrice(), p.getStock());
-            mensaje = "Producto registrado correctamente";
-            respuesta = true;
+            if(category == null) {
+            	mensaje = "La Categoria ingresada no existe";
+                respuesta = false;
+            }else if(supplier == null) {
+            	mensaje = "El Proveedor ingresado no existe";
+                respuesta = false;
+            }else {
+	            repository.save(p);
+	            mensaje = "Producto registrado correctamente";
+	            respuesta = true;
+            }
         } catch (Exception e) {
             mensaje = e.getMessage();
         }
@@ -61,15 +77,24 @@ public class ProductService {
         return resultado;
     }
 
-    public Product update(Product p) {
-        return repository.save(p);
+    public int update(Product p) {    	
+    	Category category = categoryRepository.findById(p.getCategory().getId_category()).orElse(null);
+        Supplier supplier = supplierRepository.findById(p.getSupplier().getId_supplier()).orElse(null);
+        if(category == null) {
+        	return 3;
+        }else if(supplier == null) {
+        	return 2;
+        }else {       
+        	repository.save(p);
+        	return 1;
+        }
     }
 
-    public HashMap<String, String> delete(String id) {
+    public HashMap<String, String> delete(Integer id) {
         HashMap<String, String> mensaje = new HashMap<String, String>();
         try {
-            repository.deleteById(id);
-            mensaje.put("mensaje", "Producto eliminado correctamente");
+        	repository.deleteById(id);
+        	mensaje.put("mensaje", "Producto eliminado correctamente");
         } catch (Exception e) {
             mensaje.put("error", e.getMessage());
         }

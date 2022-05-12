@@ -49,12 +49,12 @@ public class AuthController {
     @PostMapping("/newUser")
     public ResponseEntity<?> newUser(@Valid @RequestBody NewUser newUser, BindingResult bindingResult){
         if(bindingResult.hasErrors()){
-            return new ResponseEntity("Campos mal puestos o email invalido", HttpStatus.BAD_REQUEST);}
-        else{
+            return new ResponseEntity<>("Campos mal puestos o email invalido", HttpStatus.BAD_REQUEST);}
+        //else{
         if(userService.existsByUsername(newUser.getUsername()))
-            return new ResponseEntity("Ese nombre de usuario ya existe", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Ese nombre de usuario ya existe", HttpStatus.BAD_REQUEST);
         if(userService.existsByEmail(newUser.getEmail()))
-            return new ResponseEntity("Ese email ya existe", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Ese email ya existe", HttpStatus.BAD_REQUEST);
         User user = new User(newUser.getName(), newUser.getUsername(), newUser.getEmail(),
                 passwordEncoder.encode(newUser.getPassword()));
         Set<Rol> roles = new HashSet<>();
@@ -63,7 +63,7 @@ public class AuthController {
             roles.add(rolService.getByRolName(RolName.ROLE_ADMIN).get());
         user.setRoles(roles);
         userService.save(user);
-        return new ResponseEntity("Usuario guardado", HttpStatus.CREATED);}
+        return new ResponseEntity<>("Usuario guardado", HttpStatus.CREATED);//}
     }
 
     @PostMapping("/login")
@@ -77,6 +77,6 @@ public class AuthController {
         String jwt = jwtProvider.generateToken(authentication);
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         JwtDto jwtDto = new JwtDto(jwt, userDetails.getUsername(), userDetails.getAuthorities());
-        return new ResponseEntity(jwtDto, HttpStatus.OK);
+        return new ResponseEntity<>(jwtDto, HttpStatus.OK);
     }
 }

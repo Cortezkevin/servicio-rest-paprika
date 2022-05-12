@@ -8,7 +8,7 @@ import java.util.Collection;
 
 public class PaymentMapper {
 
-    private String id_payment;
+    private Integer id_payment;
     private String tipo_payment;
     private String state;
     private Collection<String> itemsOrders = new ArrayList<>();
@@ -23,23 +23,23 @@ public class PaymentMapper {
     public static Collection<String> itemsOrders(Collection<Orders> orders){
         Collection<String> listStringOrders = new ArrayList<>();
         for(Orders o: orders){
-            listStringOrders.add(o.getId_order());
+            listStringOrders.add(o.getId_order().toString());
         }
         return listStringOrders;
     }
 
-    public PaymentMapper(String id_payment, String tipo_payment, String state, Collection<String> itemsOrders) {
+    public PaymentMapper(Integer id_payment, String tipo_payment, String state, Collection<String> itemsOrders) {
         this.id_payment = id_payment;
         this.tipo_payment = tipo_payment;
         this.state = state;
         this.itemsOrders = itemsOrders;
     }
 
-    public String getId_payment() {
+    public Integer getId_payment() {
         return id_payment;
     }
 
-    public void setId_payment(String id_payment) {
+    public void setId_payment(Integer id_payment) {
         this.id_payment = id_payment;
     }
 

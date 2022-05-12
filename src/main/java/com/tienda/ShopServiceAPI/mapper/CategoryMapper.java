@@ -10,7 +10,7 @@ import java.util.Collection;
 
 public class CategoryMapper {
 
-    private String id_category;
+    private Integer id_category;
     private String name;
     private String description;
     private String url_image;
@@ -32,7 +32,7 @@ public class CategoryMapper {
         return listNames;
     }
 
-    public CategoryMapper(String id_category, String name, String description, String url_image, String state, Collection<String> itemsProducts) {
+    public CategoryMapper(Integer id_category, String name, String description, String url_image, String state, Collection<String> itemsProducts) {
         this.id_category = id_category;
         this.name = name;
         this.description = description;
@@ -41,11 +41,11 @@ public class CategoryMapper {
         this.itemsProducts = itemsProducts;
     }
 
-    public String getId_category() {
+    public Integer getId_category() {
         return id_category;
     }
 
-    public void setId_category(String id_category) {
+    public void setId_category(Integer id_category) {
         this.id_category = id_category;
     }
 

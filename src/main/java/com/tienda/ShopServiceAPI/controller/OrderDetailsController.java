@@ -36,13 +36,13 @@ public class OrderDetailsController {
 	@Autowired
 	private OrderDetailsService service;
 
-	@Autowired
-	private OrdersService ordersService;
+	/*@Autowired
+	private OrdersService ordersService;*/
 
 	@Autowired
 	private ProductService productService;
 
-	@GetMapping(path = "/list")
+	@GetMapping
 	public ResponseEntity<List<OrderDetailsMapper>> listar() {
 		List<OrderDetailsMapper> lista = (List<OrderDetailsMapper>) MapperUtil.convertToOrderDetailsMapper(service.findAll());
 		if (lista.isEmpty()) {
@@ -50,17 +50,39 @@ public class OrderDetailsController {
 		}
 		return new ResponseEntity<>(lista, HttpStatus.OK);
 	}
+	
+	@GetMapping("/listByOrder/{order}")
+	public ResponseEntity<List<OrderDetailsMapper>> listByOrder(@PathVariable("order") Integer order){
+		List<OrderDetailsMapper> lista = (List<OrderDetailsMapper>) MapperUtil.convertToOrderDetailsMapper(service.listByOrder(order));
+		if (lista.isEmpty()) {
+			return new ResponseEntity("No existen Detalles en el Pedido con id: "+order,HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<>(lista, HttpStatus.OK);
+	}
+	
+	
+	@GetMapping("/listByProduct/{product}")
+	public ResponseEntity<List<OrderDetailsMapper>> listByProduct(@PathVariable("product") String product){
+		List<OrderDetailsMapper> list = (List<OrderDetailsMapper>) MapperUtil.convertToOrderDetailsMapper(service.listByProduct(product));
+		if (list.isEmpty()) {
+			return new ResponseEntity("No existen Detalles de Pedidos con el Producto: "+product,HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<>(list, HttpStatus.OK);
+	}
 
-	@GetMapping(path = "/findById/{id}")
-	public ResponseEntity<OrderDetailsMapper> buscar(@PathVariable("id") String id) {
+	@GetMapping("/{id}")
+	public ResponseEntity<OrderDetailsMapper> buscar(@PathVariable("id") Integer id) {
 		OrderDetails obj = service.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("El elemento: " + id + ", no existe"));
 		OrderDetailsMapper orderDetailsMapper = new OrderDetailsMapper(obj);
-		return new ResponseEntity(orderDetailsMapper, HttpStatus.OK);
+		return new ResponseEntity<>(orderDetailsMapper, HttpStatus.OK);
 	}
 
-	@PostMapping(path = "/insert")
+	@PostMapping
 	public ResponseEntity<?> insert(@RequestBody OrderDetails o) {
+		Product dataP = productService.findById(o.getProduct().getId_product()).orElse(null);		
+		Double unit_price = dataP.getPrice();
+		o.setUnit_price(unit_price);
 		ResponseMessage respuesta = service.insert(o);
 		if (respuesta.isRespuesta()) {
 			return new ResponseEntity<>(respuesta, HttpStatus.CREATED);
@@ -75,6 +97,8 @@ public class OrderDetailsController {
 		ResponseMessage respuesta = new ResponseMessage();
 		if (list != null) {
 			for (OrderDetails o : list) {
+				Double unit_price = o.getProduct().getPrice();
+				o.setUnit_price(unit_price);
 				respuesta = service.insert(o);				
 			}
 			return new ResponseEntity<>(respuesta, HttpStatus.OK);
@@ -83,9 +107,9 @@ public class OrderDetailsController {
 		}
 	}
 
-	@PutMapping(path = "/update/{id}")
-	public ResponseEntity<?> update(@RequestBody OrderDetails o, @PathVariable("id") String id) {
-		OrderDetails obj = service.findById(id)
+	/*@PutMapping
+	public ResponseEntity<?> update(@RequestBody OrderDetails o) {
+		OrderDetails obj = service.findById(o.getId_order_detail())
 				.orElseThrow(() -> new ResourceNotFoundException("El usuario con el id: " + id + " no existe"));
 		Orders orders = ordersService.findById(o.getOrders().getId_order()).orElse(null);
 		Product product = productService.findById(o.getProduct().getId_product()).orElse(null);
@@ -95,10 +119,10 @@ public class OrderDetailsController {
 		obj.setDiscount(o.getDiscount());
 		ResponseMessage respuesta = service.update(obj);
 		return new ResponseEntity<>(respuesta, HttpStatus.OK);
-	}
+	}*/
 
-	@DeleteMapping(path = "/delete/{id}")
-	public ResponseEntity<?> delete(@PathVariable("id") String id) {
+	@DeleteMapping("/{id}")
+	public ResponseEntity<?> delete(@PathVariable("id") Integer id) {
 		service.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("El usuario con el id: " + id + " no existe"));
 

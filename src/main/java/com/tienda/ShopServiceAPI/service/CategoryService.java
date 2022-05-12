@@ -11,7 +11,6 @@ import com.tienda.ShopServiceAPI.repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-
 @Service
 public class CategoryService {
 	
@@ -22,20 +21,23 @@ public class CategoryService {
 		return repository.findAll();
 	}
 	
-	public Optional<Category> findById(String id){
-		Optional<Category> obj = repository.findById(id);
-		if(obj.isEmpty()) {
-			return Optional.empty();
-		}
-		return obj; 
-	}
+	public Optional<Category> findById(Integer id) {
+        Optional<Category> obj = repository.findById(id);
+        if (obj.isEmpty()) {
+            return Optional.empty();
+        } else {
+            return obj;
+        }
+    }
+
 	
 	public ResponseMessage insert(Category c){
 		ResponseMessage resultado = new ResponseMessage();
 		String mensaje = "";
 		boolean respuesta = false;
 		try {
-			repository.insert(c.getName(), c.getDescription(), c.getUrl_image());
+			//c.setState("Activo");
+			repository.save(c);
 			mensaje = "Categoria registrada correctamente";
 			respuesta = true;
 		} catch (Exception e) {
@@ -52,7 +54,7 @@ public class CategoryService {
 		return repository.save(c);
 	}
 
-	public HashMap<String, String> delete(String id){
+	public HashMap<String, String> delete(Integer id){
 		HashMap<String, String> mensaje = new HashMap<String, String>();
 		try {
 			repository.deleteById(id);

@@ -12,11 +12,11 @@ import java.util.Collection;
 
 public class OrdersMapper {
 
-    private String id_order;
+    private Integer id_order;
     private String user;
     private String payment;
-    private String username;
     private String order_date;
+    private Double discount;
     private Double total;
     private String state;
     private Collection<String> itemsOrderDetails = new ArrayList<>();
@@ -25,7 +25,7 @@ public class OrdersMapper {
     }
 
     public OrdersMapper(Orders o) {
-        this(o.getId_order(), o.getUser().getUsername(), o.getPayment().getTipo_payment(), o.getUsername(), o.getOrder_date(), o.getTotal(), o.getState(), itemsOrderDetails(o.getItemsOrderDetails()));
+        this(o.getId_order(), o.getUser().getUsername(), o.getPayment().getTipo_payment(), o.getOrder_date(), o.getTotal(),o.getDiscount(), o.getState(), itemsOrderDetails(o.getItemsOrderDetails()));
     }
 
     public static Collection<String> itemsOrderDetails(Collection<OrderDetails> orderDetails){
@@ -35,23 +35,24 @@ public class OrdersMapper {
         }
         return listStringOrderDetails;
     }
+    
+    public OrdersMapper(Integer id_order, String user, String payment, String order_date, Double discount, Double total,
+			String state, Collection<String> itemsOrderDetails) {
+		this.id_order = id_order;
+		this.user = user;
+		this.payment = payment;
+		this.order_date = order_date;
+		this.discount = discount;
+		this.total = total;
+		this.state = state;
+		this.itemsOrderDetails = itemsOrderDetails;
+	}
 
-    public OrdersMapper(String id_order, String user, String payment, String username, String order_date, Double total, String state, Collection<String> itemsOrderDetails) {
-        this.id_order = id_order;
-        this.user = user;
-        this.payment = payment;
-        this.username = username;
-        this.order_date = order_date;
-        this.total = total;
-        this.state = state;
-        this.itemsOrderDetails = itemsOrderDetails;
-    }
-
-    public String getId_order() {
+	public Integer getId_order() {
         return id_order;
     }
 
-    public void setId_order(String id_order) {
+    public void setId_order(Integer id_order) {
         this.id_order = id_order;
     }
 
@@ -69,14 +70,6 @@ public class OrdersMapper {
 
     public void setPayment(String payment) {
         this.payment = payment;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 
     public String getOrder_date() {
@@ -110,4 +103,13 @@ public class OrdersMapper {
     public void setItemsOrderDetails(Collection<String> itemsOrderDetails) {
         this.itemsOrderDetails = itemsOrderDetails;
     }
+
+	public Double getDiscount() {
+		return discount;
+	}
+
+	public void setDiscount(Double discount) {
+		this.discount = discount;
+	}
+        
 }

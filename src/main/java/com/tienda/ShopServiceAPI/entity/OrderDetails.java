@@ -11,7 +11,8 @@ import java.util.Set;
 public class OrderDetails {
 
 	@Id	
-	private String id_order_detail;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Integer id_order_detail;
 
 	@ManyToOne
 	@JoinColumn(name = "id_order", nullable = false,
@@ -47,7 +48,7 @@ public class OrderDetails {
 		// TODO Auto-generated constructor stub
 	}
 
-	public OrderDetails(String id_order_detail, Orders orders, Product product, Double unit_price, Integer amount, Double subtotal, Double discount, Double total) {
+	public OrderDetails(Integer id_order_detail, Orders orders, Product product, Double unit_price, Integer amount, Double subtotal, Double discount, Double total) {
 		this.id_order_detail = id_order_detail;
 		this.orders = orders;
 		this.product = product;
@@ -58,11 +59,11 @@ public class OrderDetails {
 		this.total = total;
 	}
 
-	public String getId_order_detail() {
+	public Integer getId_order_detail() {
 		return id_order_detail;
 	}
 
-	public void setId_order_detail(String id_order_detail) {
+	public void setId_order_detail(Integer id_order_detail) {
 		this.id_order_detail = id_order_detail;
 	}
 

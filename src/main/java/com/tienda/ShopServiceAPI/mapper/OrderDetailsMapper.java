@@ -8,7 +8,7 @@ import javax.persistence.*;
 
 public class OrderDetailsMapper {
 
-    private String id_order_detail;
+    private Integer id_order_detail;
     private String orders;
     private String product;
     private Double unit_price;
@@ -25,7 +25,7 @@ public class OrderDetailsMapper {
                 o.getUnit_price(),o.getAmount(),o.getSubtotal(),o.getDiscount(),o.getTotal());
     }
 
-    public OrderDetailsMapper(String id_order_detail, String orders, String product, Double unit_price, Integer amount, Double subtotal, Double discount, Double total) {
+    public OrderDetailsMapper(Integer id_order_detail, String orders, String product, Double unit_price, Integer amount, Double subtotal, Double discount, Double total) {
         this.id_order_detail = id_order_detail;
         this.orders = orders;
         this.product = product;
@@ -36,11 +36,11 @@ public class OrderDetailsMapper {
         this.total = total;
     }
 
-    public String getId_order_detail() {
+    public Integer getId_order_detail() {
         return id_order_detail;
     }
 
-    public void setId_order_detail(String id_order_detail) {
+    public void setId_order_detail(Integer id_order_detail) {
         this.id_order_detail = id_order_detail;
     }
 

@@ -31,7 +31,7 @@ public class CategoryController {
 	@Autowired
 	private CategoryService service;
 
-	@GetMapping(path = "/list")
+	@GetMapping
 	public ResponseEntity<List<CategoryMapper>> findAll() {
 		List<CategoryMapper> list = (List<CategoryMapper>) MapperUtil.convertToCategoryMapper(service.findAll());
 		if (list.isEmpty()) {
@@ -41,8 +41,8 @@ public class CategoryController {
 		}
 	}
 
-	@GetMapping(path = "/findById/{id}")
-	public ResponseEntity<CategoryMapper> findById(@PathVariable("id") String id) {
+	@GetMapping("/{id}")
+	public ResponseEntity<?> findById(@PathVariable("id") Integer id) {
 		Category obj = service.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("La categoria con id: " + id + " no existe"));
 		CategoryMapper categoryMapper = new CategoryMapper(obj);
@@ -50,7 +50,7 @@ public class CategoryController {
 	}
 
 	@PreAuthorize("hasRole('ADMIN')")
-	@PostMapping(path = "/insert")
+	@PostMapping
 	public ResponseEntity<?> insert(@RequestBody Category c) {
 		ResponseMessage resultado = service.insert(c);
 		if (resultado.isRespuesta()) {
@@ -61,19 +61,21 @@ public class CategoryController {
 	}
 
 	@PreAuthorize("hasRole('ADMIN')")
-	@PutMapping(path = "/update/{id}")
-	public ResponseEntity<?> update(@RequestBody Category c, @PathVariable("id") String id) {
-		Category obj = service.findById(id)
-				.orElseThrow(() -> new ResourceNotFoundException("La categoria con el id: " + id + " no existe"));
+	@PutMapping
+	public ResponseEntity<?> update(@RequestBody Category c) {
+		Category obj = service.findById(c.getId_category())
+				.orElseThrow(() -> new ResourceNotFoundException("La categoria con el id: "+c.getId_category()+" no existe"));				
 		obj.setName(c.getName());
 		obj.setDescription(c.getDescription());
 		obj.setUrl_image(c.getUrl_image());
-		return new ResponseEntity<>(service.update(obj), HttpStatus.OK);
+		obj.setState(c.getState());		
+		CategoryMapper objResult = new CategoryMapper(service.update(obj));
+		return new ResponseEntity<>(objResult, HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasRole('ADMIN')")
-	@DeleteMapping(path = "/delete/{id}")
-	public ResponseEntity<?> delete(@PathVariable("id") String id) {
+	@DeleteMapping("/{id}")
+	public ResponseEntity<?> delete(@PathVariable("id") Integer id) {
 		service.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("La categoria con el id: " + id + " no existe"));
 		return ResponseEntity.status(HttpStatus.OK).body(service.delete(id));

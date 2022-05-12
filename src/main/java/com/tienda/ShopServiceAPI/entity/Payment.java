@@ -9,7 +9,8 @@ import java.util.Collection;
 public class Payment {
 
 	@Id
-	private String id_payment;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Integer id_payment;
 	
 	@Column(name = "tipo_payment")
 	private String tipo_payment;
@@ -24,18 +25,18 @@ public class Payment {
 		// TODO Auto-generated constructor stub
 	}
 
-	public Payment(String id_payment, String tipo_payment, String state) {
+	public Payment(Integer id_payment, String tipo_payment, String state) {
 		super();
 		this.id_payment = id_payment;
 		this.tipo_payment = tipo_payment;
 		this.state = state;
 	}
 
-	public String getId_payment() {
+	public Integer getId_payment() {
 		return id_payment;
 	}
 
-	public void setId_payment(String id_payment) {
+	public void setId_payment(Integer id_payment) {
 		this.id_payment = id_payment;
 	}
 

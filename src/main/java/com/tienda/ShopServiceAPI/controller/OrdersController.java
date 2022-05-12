@@ -6,12 +6,10 @@ import java.util.Date;
 import java.util.List;
 
 import com.tienda.ShopServiceAPI.entity.Orders;
-import com.tienda.ShopServiceAPI.entity.Payment;
 import com.tienda.ShopServiceAPI.entity.response.ResponseMessage;
 import com.tienda.ShopServiceAPI.exception.ResourceNotFoundException;
 import com.tienda.ShopServiceAPI.mapper.OrdersMapper;
 import com.tienda.ShopServiceAPI.mapper.util.MapperUtil;
-import com.tienda.ShopServiceAPI.security.entity.User;
 import com.tienda.ShopServiceAPI.security.service.UserService;
 import com.tienda.ShopServiceAPI.service.OrdersService;
 import com.tienda.ShopServiceAPI.service.PaymentService;
@@ -23,7 +21,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -38,13 +35,13 @@ public class OrdersController {
 	@Autowired
 	private OrdersService service;
 
-	@Autowired
+	/*@Autowired
 	private UserService userService;
 
 	@Autowired
-	private PaymentService paymentService;
+	private PaymentService paymentService;*/
 
-	@GetMapping(path = "/list")
+	@GetMapping
 	public ResponseEntity<List<OrdersMapper>> listar() {
 		List<OrdersMapper> lista = (List<OrdersMapper>) MapperUtil.convertToOrdersMapper(service.findAll());
 		if (lista.isEmpty()) {  
@@ -52,16 +49,34 @@ public class OrdersController {
 		}
 		return new ResponseEntity<>(lista, HttpStatus.OK);
 	}
+	
+	@GetMapping("/listByUser/{username}")
+	public ResponseEntity<List<OrdersMapper>> listByUser(@PathVariable("username") String username){
+		List<OrdersMapper> list = (List<OrdersMapper>) MapperUtil.convertToOrdersMapper(service.listByUser(username));
+		if (list.isEmpty()) {  
+			return new ResponseEntity("No existen Pedidos del Usuario: "+username,HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<>(list, HttpStatus.OK);
+	}
 
-	@GetMapping(path = "/findById/{id}")
-	public ResponseEntity<OrdersMapper> buscar(@PathVariable("id") String id) {
+	@GetMapping("/listByPago/{tipoPago}")
+	public ResponseEntity<List<OrdersMapper>> listByPayment(@PathVariable("tipoPago") Integer tipoPago){
+		List<OrdersMapper> list = (List<OrdersMapper>) MapperUtil.convertToOrdersMapper(service.listByPayment(tipoPago));
+		if (list.isEmpty()) {  
+			return new ResponseEntity("No existen Pedidos del Pago con id: "+tipoPago,HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<>(list, HttpStatus.OK);
+	}
+	
+	@GetMapping("/{id}")
+	public ResponseEntity<OrdersMapper> buscar(@PathVariable("id") Integer id) {
 		Orders obj = service.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("El elemento: " + id + ", no existe"));
 		OrdersMapper ordersMapper = new OrdersMapper(obj);
-		return new ResponseEntity(ordersMapper, HttpStatus.OK);
+		return new ResponseEntity<>(ordersMapper, HttpStatus.OK);
 	}
 
-	@PostMapping(path = "/insert")
+	@PostMapping
 	public ResponseEntity<?> insert(@RequestBody Orders o) {
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		String dateNow = dateFormat.format(new Date());
@@ -73,7 +88,7 @@ public class OrdersController {
 			return new ResponseEntity<>(respuesta, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-
+/*
 	@PutMapping(path = "/update/{id}")
 	public ResponseEntity<?> update(@RequestBody Orders o, @PathVariable("id") String id) {
 		Orders obj = service.findById(id)
@@ -87,9 +102,9 @@ public class OrdersController {
 		ResponseMessage respuesta = service.update(obj);
 		return new ResponseEntity<>(respuesta, HttpStatus.OK);
 	}
-
-	@DeleteMapping(path = "/delete/{id}")
-	public ResponseEntity<?> delete(@PathVariable("id") String id) {
+*/
+	@DeleteMapping("/{id}")
+	public ResponseEntity<?> delete(@PathVariable("id") Integer id) {
 		service.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("El usuario con el id: " + id + " no existe"));
 

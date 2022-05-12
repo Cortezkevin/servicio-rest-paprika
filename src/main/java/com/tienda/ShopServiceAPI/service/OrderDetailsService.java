@@ -22,8 +22,8 @@ public class OrderDetailsService {
 	private OrderDetailsRepository repository;
 
 	@Autowired
-	private OrdersRepository ordersRepository;
-
+	private OrdersRepository orderRepository;
+	
 	@Autowired
 	private ProductRepository productRepository;
 
@@ -31,7 +31,17 @@ public class OrderDetailsService {
 		return repository.findAll();
 	}
 
-	public Optional<OrderDetails> findById(String id) {
+	public List<OrderDetails> listByOrder(Integer orderId){
+		Orders o = orderRepository.findById(orderId).orElse(null); 
+		return repository.findByOrders(o);
+	}
+	
+	public List<OrderDetails> listByProduct(String name){
+		Product p = productRepository.findByName(name).orElse(null);
+		return repository.findByProduct(p);
+	}
+	
+	public Optional<OrderDetails> findById(Integer id) {
 		Optional<OrderDetails> obj = repository.findById(id);
 		if (obj.isEmpty()) {
 			return Optional.empty();
@@ -46,9 +56,14 @@ public class OrderDetailsService {
 		boolean respuesta = false;
 		try {
 			Product product = productRepository.findById(o.getProduct().getId_product()).orElse(null);
-			repository.insert(product.getId_product(), o.getAmount(), o.getDiscount());
-			mensaje = "Detalle de pedido registrado";
-			respuesta = true;
+			if(product == null) {
+				mensaje = "El producto ingresado no existe";
+				respuesta = false;
+			}else {			
+				repository.save(o);
+				mensaje = "Detalle de pedido registrado";
+				respuesta = true;
+			}
 		} catch (Exception e) {
 			mensaje = e.getMessage();
 		}
@@ -57,7 +72,8 @@ public class OrderDetailsService {
 		resultado.setFecharespuesta(new Date());
 		return resultado;
 	}
-
+	
+	/*
 	public ResponseMessage update(OrderDetails o) {
 		ResponseMessage resultado = new ResponseMessage();
 		String mensaje = "";
@@ -65,7 +81,7 @@ public class OrderDetailsService {
 		try {
 			Orders orders = ordersRepository.findById(o.getOrders().getId_order()).orElse(null);
 			Product product = productRepository.findById(o.getProduct().getId_product()).orElse(null);
-			repository.update(orders.getId_order(), product.getId_product(), o.getAmount(), o.getDiscount(), o.getId_order_detail());
+			repository.save(o);
 			mensaje = "Detalle de pedido actualizado correctamente";
 			respuesta = true;
 		} catch (Exception e) {
@@ -76,8 +92,8 @@ public class OrderDetailsService {
 		resultado.setFecharespuesta(new Date());
 		return resultado;
 	}
-
-	public HashMap<String, String> delete(String id) {
+*/
+	public HashMap<String, String> delete(Integer id) {
 		HashMap<String, String> mensaje = new HashMap<String, String>();
 		try {
 			repository.deleteById(id);

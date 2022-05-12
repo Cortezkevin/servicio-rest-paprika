@@ -31,8 +31,18 @@ public class OrdersService {
     public List<Orders> findAll() {
         return repository.findAll();
     }
+    
+    public List<Orders> listByUser(String username){
+    	User u = userRepository.findByUsername(username).orElse(null);
+    	return repository.findByUser(u);
+    }
+    
+    public List<Orders> listByPayment(Integer tipo_payment){
+    	Payment p = paymentRepository.findById(tipo_payment).orElse(null);
+    	return repository.findByPayment(p);
+    }
 
-    public Optional<Orders> findById(String id) {
+    public Optional<Orders> findById(Integer id) {
         Optional<Orders> obj = repository.findById(id);
         if (obj.isEmpty()) {
             return Optional.empty();
@@ -48,9 +58,17 @@ public class OrdersService {
         try {
             User user = userRepository.findById(o.getUser().getId_user()).orElse(null);
             Payment payment = paymentRepository.findById(o.getPayment().getId_payment()).orElse(null);
-            repository.insert(user.getId_user(), payment.getId_payment(), o.getOrder_date(), o.getTotal());
-            mensaje = "Pedido registrado correctamente";
-            respuesta = true;
+            if(user== null){
+            	mensaje = "El usuario ingresado no existe";
+            	respuesta = false;
+            }else if(payment == null){
+            	mensaje = "El tipo de pago ingresado no existe";
+            	respuesta = false;
+            }else {            
+	            repository.save(o);
+	            mensaje = "Pedido registrado correctamente";
+	            respuesta = true;
+            }
         } catch (Exception e) {
             mensaje = e.getMessage();
         }
@@ -60,7 +78,7 @@ public class OrdersService {
         return resultado;
     }
 
-    public ResponseMessage update(Orders o) {
+    /*public ResponseMessage update(Orders o) {
         ResponseMessage resultado = new ResponseMessage();
         String mensaje = "";
         boolean respuesta = false;
@@ -78,8 +96,8 @@ public class OrdersService {
         resultado.setFecharespuesta(new Date());
         return resultado;
     }
-
-    public HashMap<String, String> delete(String id) {
+*/
+    public HashMap<String, String> delete(Integer id) {
         HashMap<String, String> mensaje = new HashMap<String, String>();
         try {
             repository.deleteById(id);

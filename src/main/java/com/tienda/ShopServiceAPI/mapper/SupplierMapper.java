@@ -9,7 +9,7 @@ import java.util.Collection;
 
 public class SupplierMapper {
 
-    private String id_supplier;
+    private Integer id_supplier;
     private String name;
     private String address;
     private Integer phone;
@@ -31,7 +31,7 @@ public class SupplierMapper {
         return listStringProducts;
     }
 
-    public SupplierMapper(String id_supplier, String name, String address, Integer phone, String state, Collection<String> itemsProducts) {
+    public SupplierMapper(Integer id_supplier, String name, String address, Integer phone, String state, Collection<String> itemsProducts) {
         this.id_supplier = id_supplier;
         this.name = name;
         this.address = address;
@@ -39,5 +39,43 @@ public class SupplierMapper {
         this.state = state;
         this.itemsProducts = itemsProducts;
     }
+    
+	public Integer getId_supplier() {
+		return id_supplier;
+	}
+	public String getName() {
+		return name;
+	}
+	public String getAddress() {
+		return address;
+	}
+	public Integer getPhone() {
+		return phone;
+	}
+	public String getState() {
+		return state;
+	}
+	public Collection<String> getItemsProducts() {
+		return itemsProducts;
+	}
+	public void setId_supplier(Integer id_supplier) {
+		this.id_supplier = id_supplier;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public void setAddress(String address) {
+		this.address = address;
+	}
+	public void setPhone(Integer phone) {
+		this.phone = phone;
+	}
+	public void setState(String state) {
+		this.state = state;
+	}
+	public void setItemsProducts(Collection<String> itemsProducts) {
+		this.itemsProducts = itemsProducts;
+	}
+        
 
 }

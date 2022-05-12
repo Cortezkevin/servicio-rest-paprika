@@ -32,7 +32,7 @@ public class PaymentController {
 	@Autowired
 	private PaymentService service;
 
-	@GetMapping(path = "/list")
+	@GetMapping
 	public ResponseEntity<List<PaymentMapper>> listar() {
 		List<PaymentMapper> lista = (List<PaymentMapper>) MapperUtil.convertToPaymentMapper(service.findAll());
 		if (lista.isEmpty()) {  
@@ -41,16 +41,16 @@ public class PaymentController {
 		return new ResponseEntity<>(lista, HttpStatus.OK);
 	}
 
-	@GetMapping(path = "/findById/{id}")
-	public ResponseEntity<Payment> buscar(@PathVariable("id") String id) {
+	@GetMapping("/{id}")
+	public ResponseEntity<PaymentMapper> buscar(@PathVariable("id") Integer id) {
 		Payment obj = service.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("El elemento: " + id + ", no existe"));
 		PaymentMapper paymentMapper = new PaymentMapper(obj);
-		return new ResponseEntity(paymentMapper, HttpStatus.OK);
+		return new ResponseEntity<>(paymentMapper, HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasRole('ADMIN')")
-	@PostMapping(path = "/insert")
+	@PostMapping
 	public ResponseEntity<?> insert(@RequestBody Payment p) {
 		ResponseMessage respuesta = service.insert(p);
 		if (respuesta.isRespuesta()) {
@@ -61,18 +61,18 @@ public class PaymentController {
 	}
 
 	@PreAuthorize("hasRole('ADMIN')")
-	@PutMapping(path = "/update/{id}")
-	public ResponseEntity<?> update(@RequestBody Payment p, @PathVariable("id") String id) {
-		Payment obj = service.findById(id)
-				.orElseThrow(() -> new ResourceNotFoundException("El usuario con el id: " + id + " no existe"));
-		obj.setTipo_payment(p.getTipo_payment());
-		service.update(obj);
-		return new ResponseEntity<>(obj, HttpStatus.OK);
+	@PutMapping
+	public ResponseEntity<?> update(@RequestBody Payment p) {
+		Payment obj = service.findById(p.getId_payment())
+				.orElseThrow(() -> new ResourceNotFoundException("El usuario con el id: " + p.getId_payment() + " no existe"));
+		obj.setTipo_payment(p.getTipo_payment());		
+		PaymentMapper objResult = new PaymentMapper(service.update(obj));
+		return new ResponseEntity<>(objResult, HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasRole('ADMIN')")
-	@DeleteMapping(path = "/delete/{id}")
-	public ResponseEntity<?> delete(@PathVariable("id") String id) {
+	@DeleteMapping("/{id}")
+	public ResponseEntity<?> delete(@PathVariable("id") Integer id) {
 		service.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("El usuario con el id: " + id + " no existe"));
 

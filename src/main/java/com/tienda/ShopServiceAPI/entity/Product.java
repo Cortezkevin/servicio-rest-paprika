@@ -14,7 +14,8 @@ import javax.validation.constraints.NotNull;
 public class Product {
 
 	@Id
-	private String id_product;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Integer id_product;
 
 	@ManyToOne
 	@JoinColumn(name = "id_category", nullable = false,
@@ -68,7 +69,7 @@ public class Product {
 		// TODO Auto-generated constructor stub
 	}
 
-	public Product(String id_product, Category category, Supplier supplier, String name, String mark, String description, String url_image, String expiration_date, Double price, Integer stock, String state) {
+	public Product(Integer id_product, Category category, Supplier supplier, String name, String mark, String description, String url_image, String expiration_date, Double price, Integer stock, String state) {
 		this.id_product = id_product;
 		this.category = category;
 		this.supplier = supplier;
@@ -82,11 +83,11 @@ public class Product {
 		this.state = state;
 	}
 
-	public String getId_product() {
+	public Integer getId_product() {
 		return id_product;
 	}
 
-	public void setId_product(String id_product) {
+	public void setId_product(Integer id_product) {
 		this.id_product = id_product;
 	}
 

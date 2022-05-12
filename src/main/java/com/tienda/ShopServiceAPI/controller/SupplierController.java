@@ -31,7 +31,7 @@ public class SupplierController {
 	@Autowired
 	private SupplierService service;
 	
-	@GetMapping(path = "/list")
+	@GetMapping
 	public ResponseEntity<List<SupplierMapper>> findAll() {
 		List<SupplierMapper> list = (List<SupplierMapper>) MapperUtil.convertToSupplierMapper(service.findAll());
 		if (list.isEmpty()) {
@@ -41,16 +41,16 @@ public class SupplierController {
 		}
 	}
 
-	@GetMapping(path = "/findById/{id}")
-	public ResponseEntity<Supplier> findById(@PathVariable("id") String id) {
+	@GetMapping("/{id}")
+	public ResponseEntity<SupplierMapper> findById(@PathVariable("id") Integer id) {
 		Supplier obj = service.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("El proveedor con id: " + id + " no existe"));
 		SupplierMapper supplierMapper = new SupplierMapper(obj);
-		return new ResponseEntity(supplierMapper, HttpStatus.OK);
+		return new ResponseEntity<>(supplierMapper, HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasRole('ADMIN')")
-	@PostMapping(path = "/insert")
+	@PostMapping
 	public ResponseEntity<?> insert(@RequestBody Supplier s) {
 		ResponseMessage resultado = service.insert(s);
 		if (resultado.isRespuesta()) {
@@ -61,19 +61,20 @@ public class SupplierController {
 	}
 
 	@PreAuthorize("hasRole('ADMIN')")
-	@PutMapping(path = "/update/{id}")
-	public ResponseEntity<?> update(@RequestBody Supplier s, @PathVariable("id") String id) {
-		Supplier obj = service.findById(id)
-				.orElseThrow(() -> new ResourceNotFoundException("El proveedor con el id: " + id + " no existe"));
+	@PutMapping
+	public ResponseEntity<?> update(@RequestBody Supplier s) {
+		Supplier obj = service.findById(s.getId_supplier())
+				.orElseThrow(() -> new ResourceNotFoundException("El proveedor con el id: " + s.getId_supplier() + " no existe"));
 		obj.setName(s.getName());
 		obj.setAddress(s.getAddress());
-		obj.setPhone(s.getPhone());
-		return new ResponseEntity<>(service.update(obj), HttpStatus.OK);
+		obj.setPhone(s.getPhone());		
+		SupplierMapper objResult = new SupplierMapper(service.update(obj)); 
+		return new ResponseEntity<>(objResult, HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasRole('ADMIN')")
-	@DeleteMapping(path = "/delete/{id}")
-	public ResponseEntity<?> delete(@PathVariable("id") String id) {
+	@DeleteMapping("/{id}")
+	public ResponseEntity<?> delete(@PathVariable("id") Integer id) {
 		service.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("El proveedor con el id: " + id + " no existe"));
 		return ResponseEntity.status(HttpStatus.OK).body(service.delete(id));

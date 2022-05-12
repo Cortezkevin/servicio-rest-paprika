@@ -12,7 +12,7 @@ import javax.validation.constraints.NotNull;
 
 public class ProductMapper {
 
-    private String id_product;
+    private Integer id_product;
     private String category;
     private String supplier;
     private String name;
@@ -32,7 +32,7 @@ public class ProductMapper {
                 p.getDescription(), p.getUrl_image(), p.getExpiration_date(), p.getPrice(), p.getStock(), p.getState());
     }
 
-    public ProductMapper(String id_product, String category, String supplier, String name, String mark, String description, String url_image, String expiration_date, Double price, Integer stock, String state) {
+    public ProductMapper(Integer id_product, String category, String supplier, String name, String mark, String description, String url_image, String expiration_date, Double price, Integer stock, String state) {
         this.id_product = id_product;
         this.category = category;
         this.supplier = supplier;
@@ -46,11 +46,11 @@ public class ProductMapper {
         this.state = state;
     }
 
-    public String getId_product() {
+    public Integer getId_product() {
         return id_product;
     }
 
-    public void setId_product(String id_product) {
+    public void setId_product(Integer id_product) {
         this.id_product = id_product;
     }
 

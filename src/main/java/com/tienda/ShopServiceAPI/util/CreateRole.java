@@ -1,7 +1,5 @@
 package com.tienda.ShopServiceAPI.util;
 
-import com.tienda.ShopServiceAPI.security.entity.Rol;
-import com.tienda.ShopServiceAPI.security.enums.RolName;
 import com.tienda.ShopServiceAPI.security.service.RolService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -16,9 +14,9 @@ public class CreateRole implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         //comentar cuando ya esta creado en la bd
-        Rol rol_admin = new Rol(RolName.ROLE_ADMIN);
+        /*Rol rol_admin = new Rol(RolName.ROLE_ADMIN);
         Rol rol_user = new Rol(RolName.ROLE_USER);
         rolService.save(rol_admin);
-        rolService.save(rol_user);
+        rolService.save(rol_user);*/
     }
 }

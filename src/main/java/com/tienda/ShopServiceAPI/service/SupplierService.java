@@ -21,7 +21,7 @@ public class SupplierService {
 		return repository.findAll();
 	}
 	
-	public Optional<Supplier> findById(String id){
+	public Optional<Supplier> findById(Integer id){
 		Optional<Supplier> obj = repository.findById(id);
 		if(obj.isEmpty()) {
 			return Optional.empty();
@@ -34,7 +34,7 @@ public class SupplierService {
 		String mensaje = "";
 		boolean respuesta = false;
 		try {
-			repository.insert(s.getName(), s.getAddress(), s.getPhone());
+			repository.save(s);
 			mensaje = "Proveedor registrado correctamente";
 			respuesta = true;
 		} catch (Exception e) {
@@ -47,11 +47,11 @@ public class SupplierService {
 		return resultado; 
 	}
 	
-	public Supplier update(Supplier s){
+	public Supplier update(Supplier s){		
 		return repository.save(s);
 	}
 
-	public HashMap<String, String> delete(String id){
+	public HashMap<String, String> delete(Integer id){
 		HashMap<String, String> mensaje = new HashMap<String, String>();
 		try {
 			repository.deleteById(id);

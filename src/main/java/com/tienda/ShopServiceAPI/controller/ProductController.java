@@ -41,7 +41,7 @@ public class ProductController {
 	@Autowired
 	private SupplierService supplierService;
 
-	@GetMapping(path = "/list")
+	@GetMapping
 	public ResponseEntity<List<ProductMapper>> findAll() {
 		List<ProductMapper> list = (List<ProductMapper>) MapperUtil.convertToProductMapper(service.findAll());
 		if (list.isEmpty()) {
@@ -50,9 +50,31 @@ public class ProductController {
 			return new ResponseEntity<>(list, HttpStatus.OK);
 		}
 	}
+	
+	@GetMapping("/listByCategory/{name}")
+	public ResponseEntity<List<ProductMapper>> findAllByCategory(@PathVariable("name") String name){
+		List<ProductMapper> list = (List<ProductMapper>) MapperUtil.convertToProductMapper(service.listByCategory(name));
+		if(list.isEmpty()) {
+			return new ResponseEntity("La Categoria con el nombre: "+name+" no existe",HttpStatus.NOT_FOUND);
+		} else {
+			return new ResponseEntity<>(list, HttpStatus.OK);
+		}
+	}
+	
+	@GetMapping("/listBySupplier/{name}")
+	public ResponseEntity<List<ProductMapper>> findAllBySupplier(@PathVariable("name") String name){
+		List<ProductMapper> list = (List<ProductMapper>) MapperUtil.convertToProductMapper(service.listBySupplier(name));
+		if(list.isEmpty()) {
+			return new ResponseEntity("El proveedor con el nombre: "+name+" no existe",HttpStatus.NOT_FOUND);
+		}else {
+			return new ResponseEntity<>(list, HttpStatus.OK);
+		}
+		
+	}
+	
 
-	@GetMapping(path = "/findById/{id}")
-	public ResponseEntity<ProductMapper> findById(@PathVariable("id") String id) {
+	@GetMapping("/{id}")
+	public ResponseEntity<ProductMapper> findById(@PathVariable("id") Integer id) {
 		Product obj = service.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("El Producto con id: " + id + " no existe"));
 		ProductMapper productMapper = new ProductMapper(obj);
@@ -60,7 +82,7 @@ public class ProductController {
 	}
 
 	@PreAuthorize("hasRole('ADMIN')")
-	@PostMapping(path = "/insert")
+	@PostMapping
 	public ResponseEntity<?> insert(@RequestBody Product p) {
 		ResponseMessage resultado = service.insert(p);
 		if (resultado.isRespuesta()) {
@@ -71,10 +93,10 @@ public class ProductController {
 	}
 
 	@PreAuthorize("hasRole('ADMIN')")
-	@PutMapping(path = "/update/{id}")
-	public ResponseEntity<?> update(@RequestBody Product p, @PathVariable("id") String id) {
-		Product obj = service.findById(id)
-				.orElseThrow(() -> new ResourceNotFoundException("El Producto con id: " + id + " no existe"));
+	@PutMapping
+	public ResponseEntity<?> update(@RequestBody Product p) {
+		Product obj = service.findById(p.getId_product())
+				.orElseThrow(() -> new ResourceNotFoundException("El Producto con id: " + p.getId_product() + " no existe"));
 		Category category = categoryService.findById(p.getCategory().getId_category()).orElse(null);
 		Supplier supplier = supplierService.findById(p.getSupplier().getId_supplier()).orElse(null);
 		obj.setCategory(category);
@@ -85,13 +107,21 @@ public class ProductController {
 		obj.setUrl_image(p.getUrl_image());
 		obj.setExpiration_date(p.getExpiration_date());
 		obj.setPrice(p.getPrice());
-		obj.setStock(p.getStock());
-		return new ResponseEntity<>(service.update(obj),HttpStatus.OK);
+		obj.setStock(p.getStock());		
+		int result = service.update(obj);
+		
+		ProductMapper objresult = new ProductMapper(obj);
+		if(result == 1) {
+			return new ResponseEntity<>(objresult,HttpStatus.OK);
+		}else if(result == 2) {
+			return new ResponseEntity<>("El proveedor ingresado no existe",HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<>("La categoria ingresado no existe",HttpStatus.NOT_FOUND);
 	}
 
 	@PreAuthorize("hasRole('ADMIN')")
 	@DeleteMapping(path = "/delete/{id}")
-	public ResponseEntity<?> delete(@PathVariable("id") String id){
+	public ResponseEntity<?> delete(@PathVariable("id") Integer id){
 		service.findById(id).orElseThrow(()-> new ResourceNotFoundException("El Producto con id: " + id + " no existe"));
 		return ResponseEntity.status(HttpStatus.OK).body(service.delete(id));
 	}

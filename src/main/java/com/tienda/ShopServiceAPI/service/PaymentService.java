@@ -21,7 +21,7 @@ public class PaymentService {
 		return repository.findAll();
 	}
 
-	public Optional<Payment> findById(String id) {
+	public Optional<Payment> findById(Integer id) {
 		Optional<Payment> obj = repository.findById(id);
 		if (obj.isEmpty()) {
 			return Optional.empty();
@@ -35,7 +35,7 @@ public class PaymentService {
 		String mensaje = "";
 		boolean respuesta = false;
 		try {
-			repository.insert(p.getTipo_payment());
+			repository.save(p);
 			respuesta = true;
 			mensaje = "Tipo de Pago registrado correctamente";			
 		} catch (Exception e) {
@@ -48,14 +48,18 @@ public class PaymentService {
 	}
 
 	public Payment update(Payment p) {
+		/*Payment dataDB = repository.findById(p.getId_payment()).orElse(null);
+		if(dataDB == null) {
+			return false;
+		}*/		
 		return repository.save(p);
 	}
 
-	public HashMap<String, String> delete(String id) {
+	public HashMap<String, String> delete(Integer id) {
 		HashMap<String, String> mensaje = new HashMap<String, String>();
 		try {
 			repository.deleteById(id);
-			mensaje.put("Mensaje", "Tipo de Pago eliminado correctamente");		
+			mensaje.put("Mensaje", "Tipo de Pago eliminado correctamente");				
 		} catch (Exception e) {
 			mensaje.put("Error", e.getMessage());
 		}
